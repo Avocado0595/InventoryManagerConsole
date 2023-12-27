@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace InventoryManagement
 {
-    public class ROLE
+    public enum Screen
     {
-        public static string STAFF = "STAFF";
-        public static string ADMIN = "ADMIN";
+        ADMIN, MANAGER ,STAFF, STAFF_MANAGER, PRODUCT_MANAGER
     }
 }
