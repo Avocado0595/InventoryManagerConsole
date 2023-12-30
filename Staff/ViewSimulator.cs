@@ -5,10 +5,12 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using InventoryManagement.Staff;
+using Microsoft.VisualBasic.FileIO;
 namespace InventoryManagement.Staff
 {
     public class ViewSimulator
     {
+        #region Staff
         private static string PasswordInput()
         {
             string password = string.Empty;
@@ -50,6 +52,7 @@ namespace InventoryManagement.Staff
             Console.Write("Fullname: ");
             fullname = Console.ReadLine();
         }
+        
         public static void CreateStaffForm(out string account, out string password, out string fullname, out ROLE role)
         {
             Console.Write("Account: ");
@@ -67,14 +70,16 @@ namespace InventoryManagement.Staff
             Console.WriteLine("Đăng nhập để tiếp tục");
             Console.WriteLine("1. Đăng nhập");
             Console.WriteLine("0. Thoát");
+            
         }
-        public static Action? AdminMenu(out Screen? screen)
+        public static Action AdminMenu(out Screen? screen)
         {
             //admin menu
             Console.WriteLine("Main Menu");
             Console.WriteLine("1. Quản lý nhân viên");
             Console.WriteLine("2. Quản lý hàng hóa");
-            Console.WriteLine("3. Đổi mật khẩu");
+            Console.WriteLine("3. Quản lý danh mục");
+            Console.WriteLine("4. Đổi mật khẩu");
             Console.WriteLine("0. Đăng xuất");
             int option = Int32.Parse(Console.ReadLine());
             screen = Screen.ADMIN;
@@ -82,23 +87,28 @@ namespace InventoryManagement.Staff
                 case 1:
                     {
                         screen = Screen.STAFF_MANAGER;
-                        return null;
+                        return Action.NONE;
                     }
                 case 2:
                     {
                         screen = Screen.PRODUCT_MANAGER;
-                        return null;
+                        return Action.NONE;
                     }
-                case 3: {
+                case 3:
+                    {
+                        screen = Screen.CATEGORY_MANAGER;
+                        return Action.NONE;
+                    }
+                case 4: {
                         Console.WriteLine("Nhập mật khẩu mới: ");
                         return Action.CHANGE_PASS;
                     }
-                default: {
-                        return Action.LOG_OUT;
-                    }
+                case 0: return Action.LOG_OUT;
+                default: return Action.NONE;
+                    
             }
         }
-        public static Action? StaffMenu(out Screen? screen)
+        public static Action StaffMenu(out Screen? screen)
         {
             //admin menu
             Console.WriteLine("Staff Menu");
@@ -112,17 +122,13 @@ namespace InventoryManagement.Staff
                 case 1:
                     {
                         screen = Screen.PRODUCT_MANAGER;
-                        return null;
+                        return Action.NONE;
                     }
-                case 2:
-                    {
-                        Console.WriteLine("Nhập mật khẩu mới: ");
-                        return Action.CHANGE_PASS;
-                    }
-                default:
-                    {
-                        return Action.LOG_OUT;
-                    }
+                case 2: return Action.CHANGE_PASS;
+                    
+                case 0: return Action.LOG_OUT;
+                default: return Action.NONE;
+                    
             }
         }
 
@@ -144,27 +150,93 @@ namespace InventoryManagement.Staff
             }
             
         }
+       
+        #endregion
+        #region Category
+        public static void CreateCategoryForm(out int id, out string name)
+        {
+            Console.Write("ID: ");
+            id = int.Parse(Console.ReadLine());
+            Console.Write("Tên loại: ");
+            name = Console.ReadLine();
+        }
+        public static Action CategoryManagerMenu() {
+                Console.WriteLine("Quản lý danh mục");
+                Console.WriteLine("1. Xem danh sách danh mục");
+                Console.WriteLine("2. Thêm");
+                Console.WriteLine("3. Xóa");
+                Console.WriteLine("4. Cập nhật");
+                Console.WriteLine("0. Back to home");
+                int option = Int32.Parse(Console.ReadLine());
+                switch (option)
+                {
+                    case 1: return Action.VIEW_ALL_CATEGORY;
+                    case 2: return Action.ADD_NEW_CATEGORY;
+                    case 3: return Action.DELETE_CATEGORY;
+                    case 4: return Action.UPDATE_CATEGORY;
+                    default: return Action.RETURN_HOME;
+
+                }
+            
+        }
+        #endregion
+        #region Product
         public static Action ProductManagerMenu()
         {
             Console.WriteLine("Quản lý hàng hóa");
             Console.WriteLine("1. Xem danh sách");
-            Console.WriteLine("2. Thêm");
-            Console.WriteLine("3. Xóa");
-            Console.WriteLine("4. Cập nhật");
+            Console.WriteLine("2. Xem chi tiết sp");
+            Console.WriteLine("3. Xem danh sách sp theo danh mục");
+            Console.WriteLine("4. Thêm");
+            Console.WriteLine("5. Xóa");
+            Console.WriteLine("6. Cập nhật danh mục");
+            Console.WriteLine("7. Xuất/Nhập kho");
             Console.WriteLine("0. Back to home");
             int option = Int32.Parse(Console.ReadLine());
             switch (option)
             {
-                case 1:
-                    {
+                case 1: return Action.VIEW_ALL_RPODUCT;
+                case 2: return Action.PRODUCT_DETAIL;
+                case 3: return Action.PROBUCT_BY_CATEGORY;
+                case 4: return Action.ADD_NEW_RPODUCT;
+                case 5: return Action.DELETE_RPODUCT;
+                case 6: return Action.UPDATE_PRODUCT_CATEGORY;
+                case 7: return ProductTransactionMenu();
+                case 0: return Action.RETURN_HOME;
+                default: return Action.NONE;
 
-                        return Action.NONE;
-                    }
-                default:
-                    {
-                        return Action.NONE;
-                    }
             }
         }
+        public static Action ProductTransactionMenu()
+        {
+            Console.WriteLine("Nhập/Xuất hàng hóa");
+            Console.WriteLine("1. Nhập kho");
+            Console.WriteLine("2. Xuất kho");       
+            Console.WriteLine("0. Back to home");
+            int option = Int32.Parse(Console.ReadLine());
+            switch (option)
+            {
+                case 1: return Action.IMPORT_PRODUCT;
+                case 2: return Action.EXPORT_PRODUCT;  
+                case 0: return Action.RETURN_HOME;
+                default: return Action.NONE;
+
+            }
+        }
+
+        public static void CreateProductForm(out int id, out string name, out string description, out int quantity, out int categoryId)
+        {
+            Console.Write("ID: ");
+            id = int.Parse(Console.ReadLine());
+            Console.Write("Tên sp: ");
+            name = Console.ReadLine();
+            Console.Write("Số lượng: ");
+            quantity = int.Parse(Console.ReadLine());
+            Console.Write("Danh mục (xem ds danh mục để lấy id): ");
+            categoryId = int.Parse(Console.ReadLine());
+            Console.Write("Mô tả: ");
+            description = Console.ReadLine();
+        }
+        #endregion
     }
 }

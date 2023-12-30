@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace InventoryManagement.Staff
 {
     public class StaffController
     {
         private Dictionary<string, Staff> staffList = new Dictionary<string, Staff>();
-        private readonly StaffModel staffModel;
+        private readonly DataService<string, Staff> staffService;
 
-        public StaffController(StaffModel staffModel)
+        public StaffController(DataService<string, Staff> staffService)
         {
-            this.staffModel = staffModel;
+            this.staffService = staffService;
             RefreshModel();
         }
         public int GetStaffCount()
@@ -24,20 +18,20 @@ namespace InventoryManagement.Staff
         public void AddNewStaff(Staff p)
         {
             staffList.Add(p.Account, p);
-            staffModel.Write(staffList);
-            RefreshModel();
+            staffService.Write(staffList);
+            //RefreshModel();
         }
         public void DeleteStaff(string account)
         {
             staffList.Remove(account);
-            staffModel.Write(staffList);
-            RefreshModel();
+            staffService.Write(staffList);
+            //RefreshModel();
         }
         public Staff? Login(string account, string password)
         {
             try
             {
-                if (staffList == null || staffList[account] == null)
+                if (!staffList.ContainsKey(account))
                 {
                     throw new Exception("Tài khoản không tồn tại");
                 }
@@ -60,12 +54,17 @@ namespace InventoryManagement.Staff
                 Console.WriteLine(p);
             }
         }
+        public Staff? GettStaffByAccount(string account)
+        {
+            if(staffList.ContainsKey(account)) { return staffList[account]; }
+            return null;
+        }
         public void UpdateRole(string account, ROLE role)
         {
             Staff p = staffList[account];
             p.Role = role;
-            staffModel.Write(staffList);
-            RefreshModel();
+            staffService.Write(staffList);
+            //RefreshModel();
         }
         public void ChangePassword(string account, string newPassword)
         {
@@ -79,14 +78,14 @@ namespace InventoryManagement.Staff
             {
                 Console.WriteLine("Fail to change password!");
             }
-            staffModel.Write(staffList);
-            RefreshModel();
+            staffService.Write(staffList);
+            //RefreshModel();
 
         }
         private void RefreshModel()
         {
-            if (staffModel.Read() != null)
-                staffList = staffModel.Read();
+            if (staffService.Read() != null)
+                staffList = staffService.Read();
         }
     }
 }

@@ -29,8 +29,7 @@ namespace InventoryManagement.Staff
         }
         public bool CheckPassword(string password)
         {
-            Console.WriteLine("\"" + password+"\"");
-            Console.WriteLine("\"" + this.password + "\"");
+            
             return BC.EnhancedVerify(password, this.password, hashType: BCrypt.Net.HashType.SHA384);
         }
         public void ChangePassword(string password) {
@@ -40,7 +39,7 @@ namespace InventoryManagement.Staff
 
         public override string ToString()
         {
-            return String.Format("{0}\t{1}\t{2}", account, fullname,role);
+            return String.Format("{0,-15}|{1,-30}|{2,-10}", account, fullname,role);
         }
     }
 }
