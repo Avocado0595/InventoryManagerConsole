@@ -1,12 +1,7 @@
 ﻿using InventoryManagement.Category;
 using InventoryManagement.Product;
 using InventoryManagement.Staff;
-using Newtonsoft.Json;
-using System.Buffers;
-using System.ComponentModel;
-using System.Text;
-using System.Text.Json;
-using static System.Net.Mime.MediaTypeNames;
+using InventoryManagement.View;
 namespace InventoryManagement
 {
     class Program
@@ -23,7 +18,7 @@ namespace InventoryManagement
             CategoryController categoryController = new CategoryController(categoryService);
             ProductController productController = new ProductController(productService);
             
-            new StaffView(staffController, categoryController, productController);
+            new MainView(staffController, categoryController, productController);
             
         }
     }

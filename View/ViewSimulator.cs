@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using InventoryManagement.Staff;
-using Microsoft.VisualBasic.FileIO;
-namespace InventoryManagement.Staff
+﻿namespace InventoryManagement.Staff
 {
     public class ViewSimulator
     {
@@ -33,7 +25,7 @@ namespace InventoryManagement.Staff
             } while (key != ConsoleKey.Enter);
             return password;
         }
-            public static void LoginForm(out string account, out string password)
+        public static void LoginForm(out string account, out string password)
         {
             Console.WriteLine("Đăng nhập");
             Console.Write("Account: ");
@@ -47,12 +39,12 @@ namespace InventoryManagement.Staff
             Console.Write("Account: ");
             account = Console.ReadLine();
             Console.Write("Password: ");
-            password  = Staff.HashPassword(PasswordInput());
+            password = Staff.HashPassword(PasswordInput());
             Console.WriteLine();
             Console.Write("Fullname: ");
             fullname = Console.ReadLine();
         }
-        
+
         public static void CreateStaffForm(out string account, out string password, out string fullname, out ROLE role)
         {
             Console.Write("Account: ");
@@ -70,7 +62,7 @@ namespace InventoryManagement.Staff
             Console.WriteLine("Đăng nhập để tiếp tục");
             Console.WriteLine("1. Đăng nhập");
             Console.WriteLine("0. Thoát");
-            
+
         }
         public static Action AdminMenu(out Screen? screen)
         {
@@ -83,7 +75,8 @@ namespace InventoryManagement.Staff
             Console.WriteLine("0. Đăng xuất");
             int option = Int32.Parse(Console.ReadLine());
             screen = Screen.ADMIN;
-            switch (option) {
+            switch (option)
+            {
                 case 1:
                     {
                         screen = Screen.STAFF_MANAGER;
@@ -99,13 +92,14 @@ namespace InventoryManagement.Staff
                         screen = Screen.CATEGORY_MANAGER;
                         return Action.NONE;
                     }
-                case 4: {
+                case 4:
+                    {
                         Console.WriteLine("Nhập mật khẩu mới: ");
                         return Action.CHANGE_PASS;
                     }
                 case 0: return Action.LOG_OUT;
                 default: return Action.NONE;
-                    
+
             }
         }
         public static Action StaffMenu(out Screen? screen)
@@ -125,10 +119,10 @@ namespace InventoryManagement.Staff
                         return Action.NONE;
                     }
                 case 2: return Action.CHANGE_PASS;
-                    
+
                 case 0: return Action.LOG_OUT;
                 default: return Action.NONE;
-                    
+
             }
         }
 
@@ -141,16 +135,17 @@ namespace InventoryManagement.Staff
             Console.WriteLine("4. Cập nhật role");
             Console.WriteLine("0. Back to home");
             int option = int.Parse(Console.ReadLine());
-            switch (option) {
+            switch (option)
+            {
                 case 1: return Action.VIEW_ALL_STAFF;
                 case 2: return Action.ADD_NEW_STAFF;
                 case 3: return Action.DELETE_STAFF;
                 case 4: return Action.UPDATE_ROLE;
                 default: return Action.RETURN_HOME;
             }
-            
+
         }
-       
+
         #endregion
         #region Category
         public static void CreateCategoryForm(out int id, out string name)
@@ -160,24 +155,25 @@ namespace InventoryManagement.Staff
             Console.Write("Tên loại: ");
             name = Console.ReadLine();
         }
-        public static Action CategoryManagerMenu() {
-                Console.WriteLine("Quản lý danh mục");
-                Console.WriteLine("1. Xem danh sách danh mục");
-                Console.WriteLine("2. Thêm");
-                Console.WriteLine("3. Xóa");
-                Console.WriteLine("4. Cập nhật");
-                Console.WriteLine("0. Back to home");
-                int option = Int32.Parse(Console.ReadLine());
-                switch (option)
-                {
-                    case 1: return Action.VIEW_ALL_CATEGORY;
-                    case 2: return Action.ADD_NEW_CATEGORY;
-                    case 3: return Action.DELETE_CATEGORY;
-                    case 4: return Action.UPDATE_CATEGORY;
-                    default: return Action.RETURN_HOME;
+        public static Action CategoryManagerMenu()
+        {
+            Console.WriteLine("Quản lý danh mục");
+            Console.WriteLine("1. Xem danh sách danh mục");
+            Console.WriteLine("2. Thêm");
+            Console.WriteLine("3. Xóa");
+            Console.WriteLine("4. Cập nhật");
+            Console.WriteLine("0. Back to home");
+            int option = Int32.Parse(Console.ReadLine());
+            switch (option)
+            {
+                case 1: return Action.VIEW_ALL_CATEGORY;
+                case 2: return Action.ADD_NEW_CATEGORY;
+                case 3: return Action.DELETE_CATEGORY;
+                case 4: return Action.UPDATE_CATEGORY;
+                default: return Action.RETURN_HOME;
 
-                }
-            
+            }
+
         }
         #endregion
         #region Product
@@ -211,13 +207,13 @@ namespace InventoryManagement.Staff
         {
             Console.WriteLine("Nhập/Xuất hàng hóa");
             Console.WriteLine("1. Nhập kho");
-            Console.WriteLine("2. Xuất kho");       
+            Console.WriteLine("2. Xuất kho");
             Console.WriteLine("0. Back to home");
             int option = Int32.Parse(Console.ReadLine());
             switch (option)
             {
                 case 1: return Action.IMPORT_PRODUCT;
-                case 2: return Action.EXPORT_PRODUCT;  
+                case 2: return Action.EXPORT_PRODUCT;
                 case 0: return Action.RETURN_HOME;
                 default: return Action.NONE;
 

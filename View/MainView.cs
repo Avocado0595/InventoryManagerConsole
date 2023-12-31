@@ -1,18 +1,19 @@
-﻿
-using InventoryManagement.Category;
+﻿using InventoryManagement.Category;
 using InventoryManagement.Product;
+using InventoryManagement.Staff;
+
 using System.Text;
 
-namespace InventoryManagement.Staff
+namespace InventoryManagement.View
 {
-    public class StaffView
+    public class MainView
     {
         private readonly StaffController staffController;
         private readonly ProductController productController;
         private readonly CategoryController categoryController;
-        private Staff? currentStaff;
+        private Staff.Staff? currentStaff;
         private Screen? screen;
-        public StaffView(StaffController staffController, CategoryController categoryController, ProductController productController)
+        public MainView(StaffController staffController, CategoryController categoryController, ProductController productController)
         {
             Console.OutputEncoding = Encoding.UTF8;
             this.staffController = staffController;
@@ -20,9 +21,9 @@ namespace InventoryManagement.Staff
             this.productController = productController;
             currentStaff = null;
             screen = null;
-            MainView();
+            View();
         }
-        private void MainView()
+        private void View()
         {
             while (true)
             {
@@ -101,7 +102,7 @@ namespace InventoryManagement.Staff
                                     Console.WriteLine("Danh sách nhân viên");
                                     Console.WriteLine(string.Format("{0,-15}|{1,-30}|{2,-10}", "account", "tên nv", "role"));
                                     Console.WriteLine(new string('-', 57));
-                                    this.staffController.GettAllStaff();
+                                    staffController.GettAllStaff();
                                     break;
                                 }
                             case Action.ADD_NEW_STAFF:
@@ -110,8 +111,13 @@ namespace InventoryManagement.Staff
                                     string account, password, fullname;
                                     ROLE role;
                                     ViewSimulator.CreateStaffForm(out account, out password, out fullname, out role);
-                                    Staff staff = new Staff(account, password, fullname, role);
-                                    this.staffController.AddNewStaff(staff);
+                                    var checkExist = staffController.GettStaffByAccount(account);
+                                    if (checkExist == null)
+                                    {
+                                        throw new Exception("Tài khoàn đã tồn tại");
+                                    }
+                                    Staff.Staff staff = new Staff.Staff(account, password, fullname, role);
+                                    staffController.AddNewStaff(staff);
                                     break;
                                 }
                             case Action.LOG_OUT:
@@ -130,14 +136,14 @@ namespace InventoryManagement.Staff
                                 {
                                     Console.Write("Nhập mật khẩu mới: ");
                                     string password = Console.ReadLine();
-                                    this.staffController.ChangePassword(currentStaff.Account, password);
+                                    staffController.ChangePassword(currentStaff.Account, password);
                                     break;
                                 }
                             case Action.DELETE_STAFF:
                                 {
                                     Console.Write("Nhập id nhân viên cần xóa: ");
                                     string account = Console.ReadLine();
-                                    this.staffController.DeleteStaff(account);
+                                    staffController.DeleteStaff(account);
                                     break;
                                 }
                             case Action.UPDATE_ROLE:
@@ -145,7 +151,7 @@ namespace InventoryManagement.Staff
                                     Console.Write("Nhập account nhân viên cần thay role: ");
                                     string account = Console.ReadLine();
                                     Console.Write("Nhập role mới (0-admin, 1-manager, 2-staff): ");
-                                    ROLE role = (ROLE)Int32.Parse(Console.ReadLine());
+                                    ROLE role = (ROLE)int.Parse(Console.ReadLine());
                                     staffController.UpdateRole(account, role);
                                     break;
                                 }
@@ -225,7 +231,8 @@ namespace InventoryManagement.Staff
                                     productController.UpdateCategoryProduct(id, categoryId);
                                     break;
                                 }
-                            case Action.PRODUCT_DETAIL: {
+                            case Action.PRODUCT_DETAIL:
+                                {
                                     Console.WriteLine("Chi tiết sản phẩm");
                                     Console.Write("Nhập ID sp: ");
                                     int id = int.Parse(Console.ReadLine());
@@ -237,7 +244,7 @@ namespace InventoryManagement.Staff
                                     else
                                     {
                                         Console.WriteLine(p);
-                                        Category.Category c = categoryController.GetCategory(p.CategoryId??0);
+                                        Category.Category c = categoryController.GetCategory(p.CategoryId ?? 0);
                                         if (c != null)
                                         {
                                             Console.WriteLine("Danh mục: " + c.Name);
@@ -245,7 +252,8 @@ namespace InventoryManagement.Staff
                                     }
                                     break;
                                 }
-                            case Action.PROBUCT_BY_CATEGORY: {
+                            case Action.PROBUCT_BY_CATEGORY:
+                                {
                                     Console.WriteLine("Xem sản phẩm theo danh mục");
                                     Console.Write("Nhập id danh mục: ");
                                     int id = int.Parse(Console.ReadLine());
@@ -256,17 +264,19 @@ namespace InventoryManagement.Staff
                                         Console.WriteLine("Danh mục không tồn tại");
                                         break;
                                     }
-                                   
+
                                     if (products != null && products.Count > 0)
                                     {
                                         Console.WriteLine("Danh sách sp theo danh mục " + c.Name);
-                                        foreach (Product.Product p in products) {
+                                        foreach (Product.Product p in products)
+                                        {
                                             Console.WriteLine(p);
                                         }
 
                                     }
-                                    else {
-                                        Console.WriteLine("Danh sách trống");  
+                                    else
+                                    {
+                                        Console.WriteLine("Danh sách trống");
                                     }
                                     break;
                                 }
@@ -283,12 +293,13 @@ namespace InventoryManagement.Staff
                                     }
                                     Console.Write("Số lượng nhập: ");
                                     int quantity = int.Parse(Console.ReadLine());
-                                    if (quantity <= 0) {
+                                    if (quantity <= 0)
+                                    {
                                         throw new Exception("Nhập số lượng nhỏ hơn 1");
-                                       
+
                                     }
                                     productController.UpdateQuantityProduct(id, quantity);
-                                    
+
                                     break;
                                 }
                             case Action.EXPORT_PRODUCT:
@@ -326,7 +337,8 @@ namespace InventoryManagement.Staff
                     }
 
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     Console.WriteLine("Ôi không, đã xảy ra lỗi");
                     Console.WriteLine(ex.Message);
                 }
@@ -335,12 +347,12 @@ namespace InventoryManagement.Staff
                 Console.Clear();
             }
         }
-        public static Staff InitAdmin()
+        public static Staff.Staff InitAdmin()
         {
             Console.WriteLine("Khởi tạo lần đầu. Tạo tài khoản admin");
             string account, password, fullname;
             ViewSimulator.CreateAdminForm(out account, out password, out fullname);
-            return new Staff(account, password, fullname, ROLE.ADMIN);
+            return new Staff.Staff(account, password, fullname, ROLE.ADMIN);
         }
     }
 }
